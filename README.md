@@ -12,7 +12,7 @@ In addition you must have the [HTML Macro](https://bobswift.atlassian.net/wiki/s
 
 ### Installing
 
-Embed a Data Section macro on your Confluence page and add a Text Data field. This field will hold your mermaid markup. Note that it must have a unique "Field Name" on the page. Add a HTML macro within the Data Section but after the Text Data field and configure the 'Location of HTML Data' field to the following:
+Embed a Data Section macro on your Confluence page and add a Text Data field with the content type set to no-format. This field will hold your mermaid markup. Note that it must have a unique "Field Name" on the page. Add a HTML macro within the Data Section but after the Text Data field and configure the 'Location of HTML Data' field to the following:
 
 ```
 #https://paulholmberg.github.io/mermaid-confluence-embed/embed_me.html

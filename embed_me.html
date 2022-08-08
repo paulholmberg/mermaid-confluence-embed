@@ -1,5 +1,5 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/8.6.3/mermaid.js"></script>
-<div class="mermaid"/>
+<div class="mermaid"></div>
 <script>
 mermaid.initialize({startOnLoad: false, securityLevel:'loose'});
 
@@ -28,7 +28,9 @@ function renderAll(section) {
   var mermaidDivs = section.querySelectorAll('.mermaid');
   var sectionId = editMode ? '' : ('section-' + section.querySelector('[data-section-macro-id]').dataset.sectionMacroId + '-');
   for (var i = 0; i < mermaidDivs.length; i++) {
-    section.ro.observe(mermaidDivs[i]);
+    if (section.ro) {
+      section.ro.observe(mermaidDivs[i]);
+    }
     var graphDefinition = undefined;
     if (textBoxes[i]) {
        graphDefinition = textBoxes[i].value;
@@ -74,6 +76,6 @@ function setupMermaidOn(thisSection) {
   }
 }
 
-setupMermaidOn(document.currentScript.parentElement.parentElement)
+setupMermaidOn(document.currentScript.parentElement)
 
 </script>

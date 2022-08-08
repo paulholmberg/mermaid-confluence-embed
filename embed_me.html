@@ -47,13 +47,14 @@ function renderAll(section) {
          (svg, bind) => insertSvg(mermaidDivs[i], svg, bind));
     }
   }
-
+  /*
   var paras = section.querySelectorAll('p')
   for (var i = 0; i < paras.length; i++) {
     if (paras[i].innerHTML.length == 0) {
       paras[i].remove();
     }
   }
+  */
 };
 
 function setupMermaidOn(thisSection) {
@@ -73,6 +74,6 @@ function setupMermaidOn(thisSection) {
   }
 }
 
-setupMermaidOn(document.currentScript.parentElement.parentElement.parentElement)
+setupMermaidOn(document.currentScript.parentElement.parentElement)
 
 </script>

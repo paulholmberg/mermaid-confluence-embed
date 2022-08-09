@@ -21,7 +21,6 @@ function renderFromTextBox(evt) {
 }
 
 function renderAll(section) {
-  console.log('renderAll', section);
   var editMode = section.classList.contains('scaffold-inner-content');
   var textBoxes = section.querySelectorAll('textarea.scaffold-data');
   var outputBlocks = section.querySelectorAll('.output-block');
@@ -49,14 +48,14 @@ function renderAll(section) {
          (svg, bind) => insertSvg(mermaidDivs[i], svg, bind));
     }
   }
-  /*
+  
   var paras = section.querySelectorAll('p')
   for (var i = 0; i < paras.length; i++) {
     if (paras[i].innerHTML.length == 0) {
       paras[i].remove();
     }
   }
-  */
+  
 };
 
 function setupMermaidOn(thisSection) {

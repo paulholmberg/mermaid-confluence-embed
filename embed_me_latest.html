@@ -1,5 +1,8 @@
 <div class="mermaid"></div>
-<script>
+<script type="module">
+ import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+ mermaid.initialize({ startOnLoad: true, securityLevel:'loose'});
+ 
  function debounce(func){
   var timer;
   return function(event){
@@ -71,11 +74,7 @@ function setupMermaidOn(thisSection) {
     setTimeout(renderAll, 2000, thisSection);
   }
 }
-</script>
-<script type="module">
-  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-  mermaid.initialize({ startOnLoad: true, securityLevel:'loose'});
-</script>
-<script>
+ 
 setupMermaidOn(document.currentScript.parentElement)
+ 
 </script>

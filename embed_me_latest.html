@@ -1,80 +1,83 @@
 <div class="mermaid"></div>
-<script type="module">
- import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
- mermaid.initialize({ startOnLoad: true, securityLevel:'loose'});
+<script>
  
- function debounce(func){
-  var timer;
-  return function(event){
-    if(timer) clearTimeout(timer);
-    timer = setTimeout(func,100,event);
+import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs')
+  .then(function (module) {
+   module.mermaid.initialize({ startOnLoad: true, securityLevel:'loose'});
+ 
+   function debounce(func){
+    var timer;
+    return function(event){
+      if(timer) clearTimeout(timer);
+      timer = setTimeout(func,100,event);
+    };
+  }
+
+  function insertSvg(el, svgCode, bindFunctions) {
+    el.innerHTML = svgCode;
+    bindFunctions(el);
+  }
+
+  function renderFromTextBox(evt) {
+    renderAll(evt.currentTarget.section);
+  }
+
+  function renderAll(section) {
+    var editMode = section.classList.contains('scaffold-inner-content');
+    var textBoxes = section.querySelectorAll('textarea.scaffold-data');
+    var outputBlocks = section.querySelectorAll('.output-block');
+    var mermaidDivs = section.querySelectorAll('.mermaid');
+    var sectionId = editMode ? '' : ('section-' + section.querySelector('[data-section-macro-id]').dataset.sectionMacroId + '-');
+    for (var i = 0; i < mermaidDivs.length; i++) {
+      if (section.ro) {
+        section.ro.observe(mermaidDivs[i]);
+      }
+      var graphDefinition = undefined;
+      if (textBoxes[i]) {
+         graphDefinition = textBoxes[i].value;
+         textBoxes[i].style.fontFamily = 'monospace';
+         textBoxes[i].section = section;
+         textBoxes[i].addEventListener('input', renderFromTextBox)
+      } else {
+         graphDefinition = outputBlocks[i].querySelector('pre').innerText;
+         outputBlocks[i].style.display = 'none';
+      }
+      if (graphDefinition) {
+         var graphId = editMode ? textBoxes[i].getAttribute('sd-name') : ('graph-' + i);
+         module.mermaid.mermaidAPI.render(
+           sectionId + graphId,
+           graphDefinition,
+           (svg, bind) => insertSvg(mermaidDivs[i], svg, bind));
+      }
+    }
+
+    var paras = section.querySelectorAll('p')
+    for (var i = 0; i < paras.length; i++) {
+      if (paras[i].innerHTML.length == 0) {
+        paras[i].remove();
+      }
+    }
+
   };
-}
 
-function insertSvg(el, svgCode, bindFunctions) {
-  el.innerHTML = svgCode;
-  bindFunctions(el);
-}
+  function setupMermaidOn(thisSection) {
+    var editMode = thisSection.classList.contains('scaffold-inner-content');
 
-function renderFromTextBox(evt) {
-  renderAll(evt.currentTarget.section);
-}
-
-function renderAll(section) {
-  var editMode = section.classList.contains('scaffold-inner-content');
-  var textBoxes = section.querySelectorAll('textarea.scaffold-data');
-  var outputBlocks = section.querySelectorAll('.output-block');
-  var mermaidDivs = section.querySelectorAll('.mermaid');
-  var sectionId = editMode ? '' : ('section-' + section.querySelector('[data-section-macro-id]').dataset.sectionMacroId + '-');
-  for (var i = 0; i < mermaidDivs.length; i++) {
-    if (section.ro) {
-      section.ro.observe(mermaidDivs[i]);
-    }
-    var graphDefinition = undefined;
-    if (textBoxes[i]) {
-       graphDefinition = textBoxes[i].value;
-       textBoxes[i].style.fontFamily = 'monospace';
-       textBoxes[i].section = section;
-       textBoxes[i].addEventListener('input', renderFromTextBox)
+    if (!editMode) {
+      thisSection.ro = new ResizeObserver(debounce(_ => renderAll(thisSection)));
+      var editButton = thisSection.querySelector('.edit-section');
+      editButton.innerHTML = "<span class=\"aui-icon aui-icon-small aui-iconfont-edit\"></span> Edit Diagram";
+      editButton.parentElement.style.justifyContent = "flex-start";
+      thisSection.style.flexDirection = 'column-reverse';
+      thisSection.style.display = 'flex';
+      renderAll(thisSection);
     } else {
-       graphDefinition = outputBlocks[i].querySelector('pre').innerText;
-       outputBlocks[i].style.display = 'none';
-    }
-    if (graphDefinition) {
-       var graphId = editMode ? textBoxes[i].getAttribute('sd-name') : ('graph-' + i);
-       mermaid.mermaidAPI.render(
-         sectionId + graphId,
-         graphDefinition,
-         (svg, bind) => insertSvg(mermaidDivs[i], svg, bind));
+      thisSection.querySelector('p').innerHTML = "Type <a href=\"https://mermaid-js.github.io/mermaid/#/n00b-gettingStarted\">mermaid diagram source</a> in the box below.";
+      setTimeout(renderAll, 2000, thisSection);
     }
   }
-  
-  var paras = section.querySelectorAll('p')
-  for (var i = 0; i < paras.length; i++) {
-    if (paras[i].innerHTML.length == 0) {
-      paras[i].remove();
-    }
-  }
-  
-};
 
-function setupMermaidOn(thisSection) {
-  var editMode = thisSection.classList.contains('scaffold-inner-content');
-
-  if (!editMode) {
-    thisSection.ro = new ResizeObserver(debounce(_ => renderAll(thisSection)));
-    var editButton = thisSection.querySelector('.edit-section');
-    editButton.innerHTML = "<span class=\"aui-icon aui-icon-small aui-iconfont-edit\"></span> Edit Diagram";
-    editButton.parentElement.style.justifyContent = "flex-start";
-    thisSection.style.flexDirection = 'column-reverse';
-    thisSection.style.display = 'flex';
-    renderAll(thisSection);
-  } else {
-    thisSection.querySelector('p').innerHTML = "Type <a href=\"https://mermaid-js.github.io/mermaid/#/n00b-gettingStarted\">mermaid diagram source</a> in the box below.";
-    setTimeout(renderAll, 2000, thisSection);
-  }
-}
- 
-setupMermaidOn(document.currentScript.parentElement)
+  setupMermaidOn(document.currentScript.parentElement)
+})
  
 </script>

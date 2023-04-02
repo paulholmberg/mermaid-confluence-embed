@@ -3,7 +3,8 @@
  
 import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs')
   .then(function (module) {
-   module.mermaid.initialize({ startOnLoad: true, securityLevel:'loose'});
+   var mermaid = module.default;
+   mermaid.initialize({ startOnLoad: true, securityLevel:'loose'});
  
    function debounce(func){
     var timer;
@@ -44,7 +45,7 @@ import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs')
       }
       if (graphDefinition) {
          var graphId = editMode ? textBoxes[i].getAttribute('sd-name') : ('graph-' + i);
-         module.mermaid.mermaidAPI.render(
+         mermaid.mermaidAPI.render(
            sectionId + graphId,
            graphDefinition,
            (svg, bind) => insertSvg(mermaidDivs[i], svg, bind));

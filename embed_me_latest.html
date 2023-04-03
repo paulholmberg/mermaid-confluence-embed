@@ -1,14 +1,12 @@
 <div class="mermaid"></div>
 <script>
 var parentRef = document.currentScript.parentElement;
+</script>
+<script type="module">
+  import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs'
+  mermaid.initialize({ startOnLoad: true, securityLevel:'loose'});
  
-import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs')
-  .then(function (module) {
-   window.mermaid = module.default;
-  
-   mermaid.initialize({ startOnLoad: true, securityLevel:'loose'});
- 
-   function debounce(func){
+  function debounce(func){
     var timer;
     return function(event){
       if(timer) clearTimeout(timer);
@@ -25,7 +23,7 @@ import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs')
     renderAll(evt.currentTarget.section);
   }
 
-  function renderAll(section) {
+  async function renderAll(section) {
     var editMode = section.classList.contains('scaffold-inner-content');
     var textBoxes = section.querySelectorAll('textarea.scaffold-data');
     var outputBlocks = section.querySelectorAll('.output-block');
@@ -47,12 +45,8 @@ import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs')
       }
       if (graphDefinition) {
          var graphId = editMode ? textBoxes[i].getAttribute('sd-name') : ('graph-' + i);
-         function localBind(svg, bind) { insertSvg(mermaidDivs[i], svg, bind) };
-         localBind.ownerDocument = parentRef.ownerDocument;
-         mermaid.mermaidAPI.render(
-           sectionId + graphId,
-           graphDefinition,
-           localBind)
+         const {svg, bindFunctions} = await mermaid.render(sectionId + graphId, graphDefinition)
+         insertSvg(mermaidDivs[i], svg, bindFunctions)
       }
     }
 
@@ -83,6 +77,5 @@ import('https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs')
   }
 
   setupMermaidOn(parentRef)
-})
  
 </script>
